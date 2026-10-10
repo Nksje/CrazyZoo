@@ -1,0 +1,58 @@
+﻿<Window x:Class="CrazyZoo.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Crazy Zoo" Height="560" Width="860">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.4*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+            <TextBlock Text="Loomad" FontWeight="Bold"/>
+            <ListBox x:Name="AnimalList" Height="220" SelectionChanged="AnimalList_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                            <TextBlock Text=" – "/>
+                            <TextBlock Text="{Binding Species}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <TextBlock Text="Nimi:" Margin="0,10,0,0"/>
+            <TextBox x:Name="NameBox"/>
+            <TextBlock Text="Tüüp:" Margin="0,5,0,0"/>
+            <ComboBox x:Name="TypeBox"/>
+            <Button Content="Lisa loom" Click="AddButton_Click" Margin="0,8,0,0"/>
+            <Button Content="Eemalda valitud" Click="RemoveButton_Click" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1">
+            <TextBlock x:Name="DetailsText" Text="Vali loom listist" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="Energia:" Margin="0,8,0,0"/>
+            <ProgressBar x:Name="EnergyBar" Minimum="0" Maximum="100" Height="18"/>
+            <TextBlock Text="Nälg:" Margin="0,5,0,0"/>
+            <ProgressBar x:Name="HungerBar" Minimum="0" Maximum="100" Height="18" Foreground="OrangeRed"/>
+
+            <WrapPanel Margin="0,10,0,0">
+                <TextBox x:Name="FoodBox" Width="50" Text="20" Margin="0,0,5,0"/>
+                <Button Content="Söötmine" Click="EatButton_Click" Margin="0,0,5,0"/>
+                <Button Content="Puhka" Click="RestButton_Click" Margin="0,0,5,0"/>
+                <Button Content="Hääl" Click="SoundButton_Click" Margin="0,0,5,0"/>
+                <Button Content="CrazyAction!" Click="CrazyButton_Click"/>
+            </WrapPanel>
+
+            <WrapPanel Margin="0,8,0,0">
+                <Button Content="Ujuda" Click="SwimButton_Click" Margin="0,0,5,0"/>
+                <Button Content="Ronida" Click="ClimbButton_Click" Margin="0,0,5,0"/>
+                <Button Content="Lennata" Click="FlyButton_Click"/>
+            </WrapPanel>
+
+            <TextBlock Text="Logi:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <ListBox x:Name="LogList" Height="210"/>
+        </StackPanel>
+    </Grid>
+</Window>
