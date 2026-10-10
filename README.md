@@ -5,7 +5,7 @@ Humoorikas WPF-rakendus, kus ahv, pingviin ja lõvi elavad samas loomaaias,
 aga käituvad erinevalt. Eesmärk on harjutada pärilust, liideseid ja polümorfismi.
 
 ## Käivitamine
-1. `git clone <repo-link>`
+1. `git clone https://github.com/Nksje/CrazyZoo.git`
 2. Ava `CrazyZoo.sln` Visual Studios (.NET 10)
 3. Määra `CrazyZoo.Wpf` startup-projektiks ja vajuta F5.
 
