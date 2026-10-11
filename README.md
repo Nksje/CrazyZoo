@@ -30,3 +30,20 @@ aga käituvad erinevalt. Eesmärk on harjutada pärilust, liideseid ja polümorf
 ## Iseseisvalt õpitud UI elemendid
 Kasutasin **DataTemplate** (loomade ilus kuvamine listis ilma ToString'ita)
 ja **ProgressBar** (energia ja nälja visuaalne näitamine, sobib olekule 0..100).
+
+## Koostöö kaasüliõpilasega
+
+Kaasüliõpilane: Egor Mikhailov (GitHub: <Egokio>)
+
+### Minu projekt (kaasüliõpilane täiendas)
+- Issue: <https://github.com/Nksje/CrazyZoo/issues/1>
+- Pull request: <https://github.com/Nksje/CrazyZoo/pull/2>
+- Ülesanne: lisada uus alamklass `Parrot : Animal` (IFly) koos CrazyAction'iga.
+
+### Kaasüliõpilase projekt (mina täiendasin)
+Repositoorium: https://github.com/Egokio/CarsWorld
+- Issue: https://github.com/Egokio/CarsWorld/issues/1
+- Pull request: https://github.com/Egokio/CarsWorld/pull/2
+- Ülesanne: lisada uus alamklass `Ambulance : Car`, mis rakendab `IRefuelable`,
+  override'ib `Drive()` ja `CrazyAction()` ning valideerib kütusekoguse `ActionResult` abil.
+- Töö tehti harus `feature/ambulance`, muudatused esitati pull request'iga, `main`/`master` harusse otse ei commit'itud.
