@@ -7,7 +7,10 @@ public static class AnimalFactory
         { "Ahv", name => new Monkey(name) },
         { "Pingviin", name => new Penguin(name) },
         { "Lõvi", name => new Lion(name) },
-        {"Papagoi", name => new Parrot(name) }
+        {"Papagoi", name => new Parrot(name) },
+        {"Delfiin", name => new Dolphin(name) },
+        {"Elevant", name => new Elephant(name) },
+        {"Orav", name => new Squirrel(name) }
     };
 
     public static IEnumerable<string> TypeNames => _creators.Keys;
