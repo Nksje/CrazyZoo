@@ -27,4 +27,10 @@ public class Monkey : Animal, IClimb, ISwimmable
         ChangeEnergy(-10);
         return $"{Name} varastas külastajalt banaani! Nälg: {Hunger}, energia: {Energy}.";
     }
+
+    protected override string ReactToCrazyAction(Animal actor)
+    {
+        ChangeMood(10);
+        return $"{Name} naerab ja plaksutab, kui {actor.Name} hullab!";
+    }
 }

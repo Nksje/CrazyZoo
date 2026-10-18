@@ -15,4 +15,11 @@ public class Lion : Animal
         ChangeHunger(20);
         return $"{Name} ajas taga omaenda saba! Energia: {Energy}, nälg: {Hunger}.";
     }
+
+    protected override string ReactToCrazyAction(Animal actor)
+    {
+        ChangeMood(-2);
+        ChangeEnergy(-2);
+        return $"{Name} urisab vaikselt, kui {actor.Name} hullab. Energia: {Energy}.";
+    }
 }

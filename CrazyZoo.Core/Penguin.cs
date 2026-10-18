@@ -25,4 +25,10 @@ public class Penguin : Animal, ISwimmable, IFly
         ChangeHunger(5);
         return $"{Name} libistas end jääl kõhuli ja karjus rõõmust. Energia: {Energy}.";
     }
+
+    protected override string ReactToNewcomer(Animal newcomer)
+    {
+        ChangeMood(8);
+        return $"{Name} kummardab viisakalt uuele loomale {newcomer.Name}.";
+    }
 }

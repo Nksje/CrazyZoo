@@ -45,4 +45,45 @@ public abstract class Animal
 
     public override string ToString() => $"{Name} ({Species})";
 
+    // Reaktsioonide olek (0..100), muutub ainult naabrite tegevustele reageerides
+    public int Mood { get; private set; } = 50;
+    public int ReactionCount { get; private set; }
+
+    public event Action<string>? ReactionLogged;
+
+    protected void ChangeMood(int delta) => Mood = Math.Clamp(Mood + delta, 0, 100);
+
+    // Hoidla tellib need käsitlejad (Subscribe). Tegevuse põhjustaja ei reageeri iseendale.
+    public void HandleNeighborAdded(object? sender, AnimalEventArgs e) => React(e.Source, ReactToNewcomer);
+    public void HandleNeighborRemoved(object? sender, AnimalEventArgs e) => React(e.Source, ReactToLeaving);
+    public void HandleNeighborCrazyAction(object? sender, AnimalEventArgs e) => React(e.Source, ReactToCrazyAction);
+
+    private void React(Animal source, Func<Animal, string> reaction)
+    {
+        if (ReferenceEquals(source, this))
+            return;
+
+        string message = reaction(source);
+        ReactionCount++;
+        ReactionLogged?.Invoke(message);
+    }
+
+    // Alamklassid võivad reaktsiooni override abil muuta
+    protected virtual string ReactToNewcomer(Animal newcomer)
+    {
+        ChangeMood(5);
+        return $"{Name} tervitab uut looma {newcomer.Name}.";
+    }
+
+    protected virtual string ReactToLeaving(Animal leaver)
+    {
+        ChangeMood(-5);
+        return $"{Name} jätab hüvasti loomaga {leaver.Name}.";
+    }
+
+    protected virtual string ReactToCrazyAction(Animal actor)
+    {
+        ChangeMood(3);
+        return $"{Name} vaatab, kuidas {actor.Name} hullab.";
+    }
 }
