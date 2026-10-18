@@ -91,3 +91,12 @@ Repositoorium: https://github.com/Egokio/CarsWorld
   override'ib `Drive()` ja `CrazyAction()` ning valideerib kütusekoguse `ActionResult` abil.
 - Töö tehti harus `feature/ambulance`, muudatused esitati pull request'iga,
   `main`/`master` harusse otse ei commit'itud.
+
+## Tehisintellekti kasutamine
+Tööriist: Claude (Anthropic).
+
+Milleks kasutasin:
+- Kodutöö 3 koodi kavandamiseks ja kirjutamiseks: `Repository<T>`, sündmused ja naabrite reaktsioonid, LINQ-päringud, MVVM (`MainViewModel`, `RelayCommand`).
+- README koostamiseks.
+
+Enda kontrollid ja muudatused: <KIRJUTA SIIA, MIDA SA ISE TEGID: nt kompileerisin ja käivitasin rakenduse, testisin kasutusjuhud 1–10, muutsin ... >
