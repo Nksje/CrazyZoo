@@ -16,6 +16,7 @@ public class ZooWorld
         Register("Ahv", name => new Monkey(name)).Create("Bobo");
         Register("Pingviin", name => new Penguin(name)).Create("Pingu");
         Register("Lõvi", name => new Lion(name)).Create("Simba");
+        Register("Papagoi", name => new Parrot(name)).Create("Kesha");
     }
 
     public AnimalSection<T> Register<T>(string typeName, Func<string, T> creator) where T : Animal
