@@ -85,6 +85,8 @@ Kaasüliõpilane: Egor Mikhailov (GitHub: Egokio)
 
 ### Kaasüliõpilase projekt (mina täiendasin)
 Repositoorium: https://github.com/Egokio/CarsWorld
+
+**Kodutöö 2**
 - Issue: https://github.com/Egokio/CarsWorld/issues/1
 - Pull request: https://github.com/Egokio/CarsWorld/pull/2
 - Ülesanne: lisada uus alamklass `Ambulance : Car`, mis rakendab `IRefuelable`,
@@ -92,8 +94,17 @@ Repositoorium: https://github.com/Egokio/CarsWorld
 - Töö tehti harus `feature/ambulance`, muudatused esitati pull request'iga,
   `main`/`master` harusse otse ei commit'itud.
 
+**Kodutöö 3**
+- Issue: https://github.com/Egokio/CarsWorld/issues/4
+- Pull request: https://github.com/Egokio/CarsWorld/pull/5
+- Ülesanne: lisada Cars World 2 projekti kolm uut tüüpi (`Ambulance`, `FireTruck`, `Taxi`).
+  Kõik pärivad `Car`, igaühel on oma `Drive()` ja `CrazyAction()`, nad on registreeritud
+  `Repository<T>`-sse (osalevad tervitus-, hüvastijätu- ja CrazyAction-reaktsioonides)
+  ning lisatud MVVM-põhisesse WPF-kasutajaliidesesse (lisamine, valimine, kuvamine, eemaldamine).
+- Töö tehti harus `feature/new-character-types`, muudatused esitati pull request'iga.
+
 ## Tehisintellekti kasutamine
-Tööriist: Claude (Anthropic). Kasutamine on õppejõu poolt lubatud.
+Tööriist: Claude (Anthropic).
 
 Milleks kasutasin:
 - Git-töövoo (branch, commit, pull request, merge) samm-sammuliseks selgitamiseks.
