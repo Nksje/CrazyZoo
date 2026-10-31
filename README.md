@@ -74,6 +74,53 @@ Kasutasin **DataTemplate** (loomade ilus kuvamine listis ilma ToString'ita),
 **ProgressBar** (energia, nälja ja meeleolu visuaalne näitamine, sobib olekule 0..100)
 ja **TabControl** (logi ja kolm LINQ-päringut eraldi vahekaartidel).
 
+## Vol.3: paralleelne arvutus (vahekaart „Prognoos (Vol.3)”)
+
+### Mida arvutatakse
+Iga valitud looma jaoks võrreldakse kolme hooldusplaani (**Vähe toitu**, **Tavaline**, **Palju toitu**).
+Iga plaani jaoks simuleeritakse looma päeva (24 tundi: uni, söögikorrad, juhuslikud CrazyAction'id)
+miljoneid kordi ja arvutatakse keskmine heaolu. Tulemus: parim plaan ja kõigi plaanide keskmised.
+See on puhas CPU-töö (`CrazyZoo.Core/Forecast/ForecastCalculator.cs`).
+
+### Kuidas see töötab
+- **Hetktõmmis**: `Animal.CreateSnapshot()` teeb looma andmetest koopia (`AnimalSnapshot`).
+  Arvutus kasutab ainult koopiat, seega taustalõimed ei puutu päris loomi.
+  Sama hetktõmmis jääb kehtima, kuni vajutad „Tee uus hetktõmmis”, nii saavad mõlemad režiimid sama sisendi.
+- **Järjestikune režiim**: `foreach` + `await`. Järgmine loom alustab alles siis, kui eelmine on valmis.
+- **Paralleelne režiim**: iga loom käivitatakse `Task.Run`-iga ja kõiki oodatakse `Task.WhenAll`-iga.
+- **Tühistamine**: üks `CancellationTokenSource`, mille token antakse kõigile arvutustele.
+  Iga simulatsioonitsükkel kutsub `token.ThrowIfCancellationRequested()`.
+- **Vead**: iga looma arvutus on oma `try/catch`-is (`ForecastRunner.RunOneAsync`), seega ühe looma
+  viga läheb raportisse ja teised arvutused jätkuvad. Demo jaoks saab linnukesega „tekita viga” vea tekitada.
+- **Aeg**: iga looma kestus ja kogu töö aeg mõõdetakse `Stopwatch`-iga.
+- **UI reageerib**: arvutus käib taustalõimedes ja taimer näitab töö ajal möödunud aega.
+  Samal ajal saab vahekaardil „Loomaaed” loomi edasi kasutada.
+
+Raportis on iga looma kohta nimi, lõppolek (Õnnestus / Viga / Tühistatud), tulemus või veateade ja kestus,
+lisaks kogu töö aeg. „Režiimide võrdlus” näitab mõlema režiimi aega ja kontrollib, kas tulemused kattuvad.
+
+### Lühike käivitusjuhend
+1. Käivita rakendus (`dotnet run --project CrazyZoo.Wpf` või Visual Studios F5).
+2. Ava vahekaart **Prognoos (Vol.3)**.
+3. Vali loomad (vaikimisi kõik 4) ja töömaht (nt 3 000 000 päeva).
+4. Vajuta **Käivita järjestikku** ja oota tulemust.
+5. Vajuta **Käivita paralleelselt**: võrdlus näitab kiirust ja „Tulemused kattuvad: 4/4 ✔”.
+6. **Viga**: pane ühele loomale linnuke „tekita viga (demo)” ja käivita. See loom saab oleku „Viga”, teised õnnestuvad.
+7. **Tühistus**: käivita suure töömahuga ja vajuta **Tühista**. Pooleli ja alustamata arvutused saavad oleku „Tühistatud”.
+
+Kui lisad või muudad loomi vahekaardil „Loomaaed”, vajuta **Tee uus hetktõmmis**.
+
+### Ekraanipildid
+| Järjestikune | Paralleelne + võrdlus |
+|---|---|
+| ![Järjestikune](docs/vol3/1-jarjestikune.png) | ![Paralleelne](docs/vol3/2-paralleelne.png) |
+
+| Viga ühel loomal | Tühistus |
+|---|---|
+| ![Viga](docs/vol3/3-viga.png) | ![Tühistus](docs/vol3/4-tuhistus.png) |
+
+Töö ajal (UI reageerib, taimer jookseb): ![Töö ajal](docs/vol3/0-toos.png)
+
 ## Koostöö kaasüliõpilasega
 
 Kaasüliõpilane: Egor Mikhailov (GitHub: Egokio)
@@ -109,6 +156,7 @@ Tööriist: Claude (Anthropic).
 Milleks kasutasin:
 - Git-töövoo (branch, commit, pull request, merge) samm-sammuliseks selgitamiseks.
 - README koostamiseks.
+- Vol.3 paralleelse arvutuse (`Task.Run`, `Task.WhenAll`, `CancellationToken`, `Stopwatch`) kirjutamiseks ja selgitamiseks.
 
 Enda kontrollid ja muudatused:
 - Lasin Claude'il selgitada, mida iga osa teeb ja kuidas see teiste osadega seostub, ning kontrollisin selle koodist üle.
