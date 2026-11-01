@@ -45,6 +45,9 @@ public abstract class Animal
 
     public override string ToString() => $"{Name} ({Species})";
 
+    // Vol.3: andmete koopia taustaarvutuse jaoks
+    public Forecast.AnimalSnapshot CreateSnapshot() => new(Name, Species, Energy, Hunger, Mood);
+
     // Reaktsioonide olek (0..100), muutub ainult naabrite tegevustele reageerides
     public int Mood { get; private set; } = 50;
     public int ReactionCount { get; private set; }

@@ -34,9 +34,13 @@ public class MainViewModel : ViewModelBase
     public RelayCommand ClimbCommand { get; }
     public RelayCommand FlyCommand { get; }
 
+    // Vol.3: prognooside vahekaart
+    public ForecastViewModel Forecast { get; }
+
     public MainViewModel()
     {
         _world.Logged += AddLog;
+        Forecast = new ForecastViewModel(_world);
 
         AddCommand = new RelayCommand(AddAnimal, () => SelectedSection != null && !string.IsNullOrWhiteSpace(NewName));
         RemoveCommand = new RelayCommand(RemoveAnimal, HasAnimal);
