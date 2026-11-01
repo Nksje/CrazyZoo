@@ -76,6 +76,8 @@ ja **TabControl** (logi ja kolm LINQ-päringut eraldi vahekaartidel).
 
 ## Vol.3: paralleelne arvutus (vahekaart „Prognoos (Vol.3)”)
 
+Pull request: <https://github.com/Nksje/CrazyZoo/pull/5>
+
 ### Mida arvutatakse
 Iga valitud looma jaoks võrreldakse kolme hooldusplaani (**Vähe toitu**, **Tavaline**, **Palju toitu**).
 Iga plaani jaoks simuleeritakse looma päeva (24 tundi: uni, söögikorrad, juhuslikud CrazyAction'id)
