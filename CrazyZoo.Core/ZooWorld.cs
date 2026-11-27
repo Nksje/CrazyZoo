@@ -1,6 +1,6 @@
 ﻿namespace CrazyZoo.Core;
 
-// Kogu loomaaed: iga loomatüüp saab oma hoidla
+// Kogu loomaaed: iga rühm on oma tüübipõhine hoidla
 public class ZooWorld
 {
     private readonly List<IAnimalSection> _sections = new();
@@ -22,6 +22,9 @@ public class ZooWorld
         w.AddSection(nameof(Penguin), "Pingviinid").Create("Pingu");
         w.AddSection(nameof(Lion), "Lõvid").Create("Simba");
         w.AddSection(nameof(Parrot), "Papagoid").Create("Kesha");
+        w.AddSection(nameof(Dolphin), "Delfiinid").Create("Flipper");
+        w.AddSection(nameof(Elephant), "Elevandid").Create("Dumbo");
+        w.AddSection(nameof(Squirrel), "Oravad").Create("Chip");
         return w;
     }
 

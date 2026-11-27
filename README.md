@@ -1,7 +1,7 @@
 # Crazy Zoo
 
 ## Maailm ja eesmärk
-Humoorikas WPF-rakendus, kus ahv, pingviin, lõvi ja papagoi elavad samas loomaaias,
+Humoorikas WPF-rakendus, kus ahv, pingviin, lõvi, papagoi, delfiin, elevant ja orav elavad samas loomaaias,
 aga käituvad erinevalt. Eesmärk on harjutada pärilust, liideseid, polümorfismi,
 üldtüüpe (generics), sündmusi, LINQ-i, MVVM-i, paralleelset arvutust ning
 maailma salvestamist (JSON, XML, LocalDB) ja Dependency Injectionit.
@@ -23,8 +23,8 @@ maailma salvestamist (JSON, XML, LocalDB) ja Dependency Injectionit.
 - `docs/vol4/` – vigased failid laadimise vigade demonstreerimiseks.
 
 ## Klassihierarhia
-- `Animal` (abstract) → `Monkey`, `Penguin`, `Lion`, `Parrot`
-- `ISwimmable` – Monkey, Penguin; `IClimb` – Monkey; `IFly` – Penguin, Parrot
+- `Animal` (abstract) → `Monkey`, `Penguin`, `Lion`, `Parrot`, `Dolphin`, `Elephant`, `Squirrel`
+- `ISwimmable` – Monkey, Penguin, Dolphin; `IClimb` – Monkey, Squirrel; `IFly` – Penguin, Parrot
 - Monkey ja Penguin rakendavad kahte rolli.
 - `IRepository<T>` / `Repository<T> where T : Animal` – tüübipõhine hoidla (Add, Remove, GetAll, Find)
 - `AnimalSection<T>` – üks rühm = üks tüübipõhine hoidla `Repository<T>`. Igal rühmal on `Id` ja nimi.
@@ -96,6 +96,8 @@ ja **TabControl** (logi ja kolm LINQ-päringut eraldi vahekaartidel).
 
 ## Vol.3: paralleelne arvutus (vahekaart „Prognoos (Vol.3)”)
 
+Pull request: <https://github.com/Nksje/CrazyZoo/pull/5>
+
 ### Mida arvutatakse
 Iga valitud looma jaoks võrreldakse kolme hooldusplaani (**Vähe toitu**, **Tavaline**, **Palju toitu**).
 Iga plaani jaoks simuleeritakse looma päeva (24 tundi: uni, söögikorrad, juhuslikud CrazyAction'id)
@@ -122,9 +124,9 @@ lisaks kogu töö aeg. „Režiimide võrdlus” näitab mõlema režiimi aega j
 ### Lühike käivitusjuhend
 1. Käivita rakendus (`dotnet run --project CrazyZoo.Wpf` või Visual Studios F5).
 2. Ava vahekaart **Prognoos (Vol.3)**.
-3. Vali loomad (vaikimisi kõik 4) ja töömaht (nt 3 000 000 päeva).
+3. Vali loomad (vaikimisi kõik) ja töömaht (nt 3 000 000 päeva).
 4. Vajuta **Käivita järjestikku** ja oota tulemust.
-5. Vajuta **Käivita paralleelselt**: võrdlus näitab kiirust ja „Tulemused kattuvad: 4/4 ✔”.
+5. Vajuta **Käivita paralleelselt**: võrdlus näitab kiirust ja „Tulemused kattuvad: 7/7 ✔” (kõik valitud loomad).
 6. **Viga**: pane ühele loomale linnuke „tekita viga (demo)” ja käivita. See loom saab oleku „Viga”, teised õnnestuvad.
 7. **Tühistus**: käivita suure töömahuga ja vajuta **Tühista**. Pooleli ja alustamata arvutused saavad oleku „Tühistatud”.
 
@@ -146,7 +148,7 @@ Töö ajal (UI reageerib, taimer jookseb): ![Töö ajal](docs/vol3/0-toos.png)
 ### Mida salvestatakse
 Maailma olek salvestatakse eraldi andmeobjektidesse (DTO), mitte aknaid, käske ega sündmuste tellimusi:
 - `WorldDto` – failiversioon, rühmad ja loomad.
-- `GroupDto` – rühma ID, nimi ja loomatüüp (`Monkey`, `Penguin`, `Lion`, `Parrot`).
+- `GroupDto` – rühma ID, nimi ja loomatüüp (`Monkey`, `Penguin`, `Lion`, `Parrot`, `Dolphin`, `Elephant`, `Squirrel`).
 - `AnimalDto` – looma ID, tüüp, nimi, muutuvad väljad (`Energy`, `Hunger`, `Mood`, `ReactionCount`)
   ja rühmakuuluvus (`GroupId`).
 
