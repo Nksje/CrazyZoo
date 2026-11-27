@@ -23,7 +23,7 @@ public class AnimalChoice
 // Vol.3: hooldusplaanide prognoos järjestikku ja paralleelselt
 public class ForecastViewModel : ViewModelBase
 {
-    private readonly ZooWorld _world;
+    private ZooWorld _world;
     private CancellationTokenSource? _cts;
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(100) };
     private readonly Stopwatch _runStopwatch = new();
@@ -65,6 +65,13 @@ public class ForecastViewModel : ViewModelBase
         // Taimer näitab, et UI elab arvutuse ajal edasi
         _timer.Tick += (s, e) => ElapsedText = $"Möödunud aeg: {_runStopwatch.Elapsed.TotalSeconds:F1} s";
 
+        TakeSnapshot();
+    }
+
+    // Vol.4: pärast maailma laadimist kasutab prognoos uut maailma
+    public void SetWorld(ZooWorld world)
+    {
+        _world = world;
         TakeSnapshot();
     }
 

@@ -2,7 +2,7 @@
 
 public class Lion : Animal
 {
-    public Lion(string name) : base(name, "Lõvi") { }
+    public Lion(int id, string name) : base(id, name, "Lõvi") { }
 
     public override string MakeSound() => $"{Name}: ROOOAAAR!";
 

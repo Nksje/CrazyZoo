@@ -1,21 +1,36 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows.Input;
 using CrazyZoo.Core;
+using CrazyZoo.Core.Persistence;
+using CrazyZoo.Wpf.Services;
+using Microsoft.Data.SqlClient;
 
 namespace CrazyZoo.Wpf.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    private readonly ZooWorld _world = new();
+    // Vol.4: salvestusteenused tulevad DI kaudu konstruktorist
+    private readonly IWorldStorage _storage;
+    private readonly IStorageLocationPicker _locationPicker;
+
+    // Maailm pole enam readonly: laadimisel asendatakse see uuega
+    private ZooWorld _world = ZooWorld.CreateDefault();
 
     private IAnimalSection? _selectedSection;
     private Animal? _selectedAnimal;
+    private IAnimalSection? _selectedMoveTarget;
     private string _newName = string.Empty;
     private string _foodAmountText = "20";
     private string _searchText = string.Empty;
+    private bool _isBusy;
 
-    // Hoidlad ja valitud hoidla loomad
+    // Rühmad (hoidlad) ja valitud rühma loomad
     public IReadOnlyList<IAnimalSection> Sections => _world.Sections;
     public ObservableCollection<Animal> Animals { get; } = new();
+
+    // Rühmad, kuhu valitud looma saab viia (sama tüüp, teine rühm)
+    public ObservableCollection<IAnimalSection> MoveTargets { get; } = new();
 
     // Logi ja LINQ-päringute tulemused
     public ObservableCollection<string> LogEntries { get; } = new();
@@ -34,11 +49,19 @@ public class MainViewModel : ViewModelBase
     public RelayCommand ClimbCommand { get; }
     public RelayCommand FlyCommand { get; }
 
+    // Vol.4: rühma vahetus, salvestamine ja laadimine
+    public RelayCommand MoveCommand { get; }
+    public RelayCommand SaveCommand { get; }
+    public RelayCommand LoadCommand { get; }
+
     // Vol.3: prognooside vahekaart
     public ForecastViewModel Forecast { get; }
 
-    public MainViewModel()
+    public MainViewModel(IWorldStorage storage, IStorageLocationPicker locationPicker)
     {
+        _storage = storage;
+        _locationPicker = locationPicker;
+
         _world.Logged += AddLog;
         Forecast = new ForecastViewModel(_world);
 
@@ -51,6 +74,10 @@ public class MainViewModel : ViewModelBase
         SwimCommand = new RelayCommand(Swim, HasAnimal);
         ClimbCommand = new RelayCommand(Climb, HasAnimal);
         FlyCommand = new RelayCommand(Fly, HasAnimal);
+
+        MoveCommand = new RelayCommand(MoveAnimal, () => HasAnimal() && SelectedMoveTarget != null);
+        SaveCommand = new RelayCommand(async () => await SaveWorldAsync(), () => !IsBusy);
+        LoadCommand = new RelayCommand(async () => await LoadWorldAsync(), () => !IsBusy && !Forecast.IsRunning);
 
         SelectedSection = Sections.FirstOrDefault();
         RefreshQueries();
@@ -75,8 +102,17 @@ public class MainViewModel : ViewModelBase
         set
         {
             if (SetField(ref _selectedAnimal, value))
+            {
                 RefreshDetails();
+                RefreshMoveTargets();
+            }
         }
+    }
+
+    public IAnimalSection? SelectedMoveTarget
+    {
+        get => _selectedMoveTarget;
+        set => SetField(ref _selectedMoveTarget, value);
     }
 
     public string NewName
@@ -101,8 +137,22 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    // Salvestamise/laadimise ajal on nupud keelatud
+    public bool IsBusy
+    {
+        get => _isBusy;
+        private set
+        {
+            if (SetField(ref _isBusy, value))
+                CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    // Näitab, millise salvestusteostuse DI valis
+    public string StorageInfo => $"Teostus (DI): {_storage.GetType().Name} – {_locationPicker.Description}";
+
     // Valitud looma andmed (UI uuendub PropertyChanged kaudu)
-    public string DetailsTitle => SelectedAnimal is null ? "Vali loom listist" : SelectedAnimal.ToString();
+    public string DetailsTitle => SelectedAnimal is null ? "Vali loom listist" : $"#{SelectedAnimal.Id} {SelectedAnimal}";
     public int SelectedEnergy => SelectedAnimal?.Energy ?? 0;
     public int SelectedHunger => SelectedAnimal?.Hunger ?? 0;
     public int SelectedMood => SelectedAnimal?.Mood ?? 0;
@@ -129,6 +179,22 @@ public class MainViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedHunger));
         OnPropertyChanged(nameof(SelectedMood));
         OnPropertyChanged(nameof(SelectedReactionCount));
+    }
+
+    // Sama tüüpi teised rühmad, kuhu valitud looma saab viia
+    private void RefreshMoveTargets()
+    {
+        MoveTargets.Clear();
+        SelectedMoveTarget = null;
+        if (SelectedAnimal == null)
+            return;
+
+        foreach (IAnimalSection section in Sections)
+        {
+            if (section != SelectedSection && section.Accepts(SelectedAnimal))
+                MoveTargets.Add(section);
+        }
+        SelectedMoveTarget = MoveTargets.FirstOrDefault();
     }
 
     // LINQ-päringud kõigi hoidlate loomade peal
@@ -161,7 +227,7 @@ public class MainViewModel : ViewModelBase
         {
             Animal animal = SelectedSection.Create(NewName);
             Animals.Add(animal);
-            AddLog($"Lisati: {animal}");
+            AddLog($"Lisati: #{animal.Id} {animal}");
             NewName = string.Empty;
             SelectedAnimal = animal;
             RefreshAll();
@@ -181,9 +247,31 @@ public class MainViewModel : ViewModelBase
         if (SelectedSection.Remove(animal))
         {
             Animals.Remove(animal);
-            AddLog($"Eemaldati: {animal}");
+            AddLog($"Eemaldati: #{animal.Id} {animal}");
             SelectedAnimal = null;
             RefreshAll();
+        }
+    }
+
+    // Vol.4: rühma vahetus. Vana rühm jätab hüvasti, uus rühm tervitab.
+    private void MoveAnimal()
+    {
+        if (SelectedSection == null || SelectedAnimal == null || SelectedMoveTarget == null)
+            return;
+
+        Animal animal = SelectedAnimal;
+        IAnimalSection target = SelectedMoveTarget;
+        try
+        {
+            _world.Move(animal, SelectedSection, target);
+            AddLog($"{animal.Name} viidi rühma {target.Title}.");
+            Animals.Remove(animal);
+            SelectedAnimal = null;
+            RefreshAll();
+        }
+        catch (ArgumentException ex)
+        {
+            AddLog("Viga: " + ex.Message);
         }
     }
 
@@ -259,5 +347,73 @@ public class MainViewModel : ViewModelBase
         if (flyer != null) AddLog(flyer.Fly());
         else AddLog($"{SelectedAnimal.Name} ei oska lennata.");
         RefreshAll();
+    }
+
+    // ===== Vol.4: salvestamine ja laadimine =====
+
+    private async Task SaveWorldAsync()
+    {
+        string? location = _locationPicker.PickSaveLocation();
+        if (location == null)
+            return; // Cancel → midagi ei juhtu
+
+        IsBusy = true;
+        try
+        {
+            WorldDto dto = WorldMapper.ToDto(_world); // andmete koopia, mitte aknad ega käsud
+            await _storage.SaveAsync(dto, location);
+            AddLog($"Maailm salvestati: {location} ({dto.Animals.Count} looma, {dto.Groups.Count} rühma)");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                      or InvalidDataException or SqlException or InvalidOperationException)
+        {
+            AddLog("Salvestamine ebaõnnestus: " + ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task LoadWorldAsync()
+    {
+        string? location = _locationPicker.PickLoadLocation();
+        if (location == null)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            WorldDto dto = await _storage.LoadAsync(location);
+            ZooWorld loaded = WorldMapper.FromDto(dto); // kontroll; vea korral erind
+            ReplaceWorld(loaded);                       // alles nüüd asendame nähtava maailma
+            AddLog($"Maailm laaditi: {location} ({loaded.AllAnimals.Count()} looma)");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                      or InvalidDataException or SqlException or InvalidOperationException)
+        {
+            AddLog("Laadimine ebaõnnestus, senine maailm jäi alles: " + ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    // Asendab maailma ja teavitab UI-d kõigist muutunud andmetest
+    private void ReplaceWorld(ZooWorld newWorld)
+    {
+        _world.Logged -= AddLog;
+        _world = newWorld;
+        _world.Logged += AddLog;
+
+        OnPropertyChanged(nameof(Sections));
+        SelectedSection = Sections.FirstOrDefault();
+        SelectedAnimal = null;
+        RefreshAnimals();
+        RefreshMoveTargets();
+        RefreshAll();
+
+        Forecast.SetWorld(_world);
     }
 }

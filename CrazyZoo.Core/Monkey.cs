@@ -2,7 +2,7 @@
 
 public class Monkey : Animal, IClimb, ISwimmable
 {
-    public Monkey(string name) : base(name, "Ahv") { }
+    public Monkey(int id, string name) : base(id, name, "Ahv") { }
 
     public override string MakeSound() => $"{Name}: Uh-uh-ah-ah!";
 

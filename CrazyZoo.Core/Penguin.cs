@@ -2,7 +2,7 @@
 
 public class Penguin : Animal, ISwimmable, IFly
 {
-    public Penguin(string name) : base(name, "Pingviin") { }
+    public Penguin(int id, string name) : base(id, name, "Pingviin") { }
 
     public override string MakeSound() => $"{Name}: Kraaa!";
 

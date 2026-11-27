@@ -2,19 +2,23 @@
 
 public abstract class Animal
 {
+    public int Id { get; }
     public string Name { get; }
     public string Species { get; }
 
     public int Energy { get; private set; } = 50;
     public int Hunger { get; private set; } = 50;
 
-    protected Animal(string name, string species)
+    protected Animal(int id, string name, string species)
     {
+        if (id <= 0)
+            throw new ArgumentException("ID peab olema positiivne täisarv.");
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Nimi ei tohi olla tühi.");
         if (name.Trim().Length > 20)
             throw new ArgumentException("Nimi on liiga pikk (max 20 märki).");
 
+        Id = id;
         Name = name.Trim();
         Species = species;
     }
@@ -88,5 +92,14 @@ public abstract class Animal
     {
         ChangeMood(3);
         return $"{Name} vaatab, kuidas {actor.Name} hullab.";
+    }
+
+    // Vol.4: ainult laadimiseks. Väärtused kontrollib WorldMapper enne seda.
+    internal void RestoreState(int energy, int hunger, int mood, int reactionCount)
+    {
+        Energy = energy;
+        Hunger = hunger;
+        Mood = mood;
+        ReactionCount = reactionCount;
     }
 }
