@@ -3,14 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:CrazyZoo.Wpf.ViewModels"
         Title="Crazy Zoo" Height="720" Width="1000">
-    <Window.DataContext>
-        <vm:MainViewModel/>
-    </Window.DataContext>
-
     <Window.Resources>
         <!-- Üks mall, mida kasutavad kõik looma-listid -->
         <DataTemplate x:Key="AnimalLineTemplate">
             <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Id, StringFormat='#{0} '}" Foreground="Gray"/>
                 <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                 <TextBlock Text=" ("/>
                 <TextBlock Text="{Binding Species}"/>
@@ -31,9 +28,9 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Margin="0,0,10,0">
-            <TextBlock Text="Hoidla (loomatüüp):" FontWeight="Bold"/>
+            <TextBlock Text="Rühm (hoidla):" FontWeight="Bold"/>
             <ComboBox ItemsSource="{Binding Sections}"
-                      DisplayMemberPath="TypeName"
+                      DisplayMemberPath="Title"
                       SelectedItem="{Binding SelectedSection}"/>
 
             <TextBlock Text="Loomad" FontWeight="Bold" Margin="0,10,0,0"/>
@@ -43,6 +40,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Id, StringFormat='#{0} '}" Foreground="Gray"/>
                             <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                             <TextBlock Text=" – "/>
                             <TextBlock Text="{Binding Species}"/>
@@ -55,6 +53,19 @@
             <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Lisa loom" Command="{Binding AddCommand}" Margin="0,8,0,0"/>
             <Button Content="Eemalda valitud" Command="{Binding RemoveCommand}" Margin="0,5,0,0"/>
+
+            <!-- Vol.4: rühma vahetus -->
+            <TextBlock Text="Vii teise rühma:" FontWeight="Bold" Margin="0,12,0,0"/>
+            <ComboBox ItemsSource="{Binding MoveTargets}"
+                      DisplayMemberPath="Title"
+                      SelectedItem="{Binding SelectedMoveTarget}"/>
+            <Button Content="Vii rühma" Command="{Binding MoveCommand}" Margin="0,5,0,0"/>
+
+            <!-- Vol.4: salvestamine ja laadimine -->
+            <TextBlock Text="Salvestamine" FontWeight="Bold" Margin="0,12,0,0"/>
+            <TextBlock Text="{Binding StorageInfo}" Foreground="Gray" TextWrapping="Wrap"/>
+            <Button Content="Salvesta maailm" Command="{Binding SaveCommand}" Margin="0,5,0,0"/>
+            <Button Content="Laadi maailm" Command="{Binding LoadCommand}" Margin="0,5,0,0"/>
         </StackPanel>
 
         <StackPanel Grid.Column="1">

@@ -6,7 +6,7 @@ namespace CrazyZoo.Core;
 
 public class Parrot : Animal, IFly
 {
-    public Parrot(string name) : base(name, "Papagoi") { }
+    public Parrot(int id, string name) : base(id, name, "Papagoi") { }
 
     public override string MakeSound() => $"{Name}: Kurr-kurr! Tere, tere!";
 

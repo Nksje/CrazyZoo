@@ -6,7 +6,7 @@ namespace CrazyZoo.Core;
 
 public class Dolphin : Animal, ISwimmable
 {
-    public Dolphin(string name) : base(name, "Delfiin") { }
+    public Dolphin(int id, string name) : base(id, name, "Delfiin") { }
 
     public override string MakeSound() => $"{Name}: Klik-klik-kliiks!";
 

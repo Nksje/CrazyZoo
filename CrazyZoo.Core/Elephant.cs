@@ -6,7 +6,7 @@ namespace CrazyZoo.Core;
 
 public class Elephant : Animal
 {
-    public Elephant(string name) : base(name, "Elevant") { }
+    public Elephant(int id, string name) : base(id, name, "Elevant") { }
 
     public override string MakeSound() => $"{Name}: Tuuuut!";
 

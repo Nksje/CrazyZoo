@@ -6,7 +6,7 @@ namespace CrazyZoo.Core;
 
 public class Squirrel : Animal, IClimb
 {
-    public Squirrel(string name) : base(name, "Orav") { }
+    public Squirrel(int id, string name) : base(id, name, "Orav") { }
 
     public override string MakeSound() => $"{Name}: Tsirr-tsirr!";
 

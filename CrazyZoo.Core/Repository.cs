@@ -78,4 +78,15 @@ public class Repository<T> : IRepository<T> where T : Animal
     }
 
     private void OnReactionLogged(string message) => Logged?.Invoke(message);
+
+    // Vol.4: laadimine. Loom lisatakse ja tellib sündmused, aga keegi ei tervita
+    // (muidu muutuksid salvestatud Mood ja ReactionCount).
+    internal void Restore(T item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        if (_items.Contains(item))
+            throw new ArgumentException("See loom on juba hoidlas.");
+        _items.Add(item);
+        Subscribe(item);
+    }
 }
