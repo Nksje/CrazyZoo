@@ -145,6 +145,8 @@ Töö ajal (UI reageerib, taimer jookseb): ![Töö ajal](docs/vol3/0-toos.png)
 
 ## Vol.4: maailma salvestamine ja taastamine
 
+Pull request: <https://github.com/Nksje/CrazyZoo/pull/6>
+
 ### Mida salvestatakse
 Maailma olek salvestatakse eraldi andmeobjektidesse (DTO), mitte aknaid, käske ega sündmuste tellimusi:
 - `WorldDto` – failiversioon, rühmad ja loomad.
